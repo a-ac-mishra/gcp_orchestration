@@ -1,5 +1,5 @@
 # ML Pipeline orchestration
-This repo will include code samples which will explain various orchestration approaches of ML components in a pipeline on GCP. 
+This repo includes code samples which will explain various orchestration approaches of ML components in a pipeline on GCP. 
 
 We have discussed the three most widely used ML workflows: 
 1. Kubeflow
