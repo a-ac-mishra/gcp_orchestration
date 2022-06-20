@@ -1,9 +1,11 @@
-""""DAG definition for Chicago Taxifare pipeline.
+""""
+    DAG definition for Chicago Taxifare pipeline.
     This pipeline was created for use as a demo in the Data Engineering
-    on GCP Course"""
+    on GCP Course
+"""
+
 
 import datetime
-from base64 import b64encode as b64e
 
 from airflow import DAG
 from airflow.models import Variable

@@ -4,7 +4,7 @@
 ### Initial Setup
 -------------------
 
-1. Set up and deploy an AI Platform Pipeline on a new Kubernetes cluste
+1. Set up and deploy an AI Platform Pipeline on a new Kubernetes cluster
 
   - Go to `AI Platform` -> `Pipeline`
   - Click on `New Instance` & on next page click `Configure`

@@ -8,7 +8,7 @@ setup(
     name='chicago_taxifare',
     version='1.0',
     author='owners name',
-    author_email='user name@email-address.com',
+    author_email='user_name@email-address.com',
     install_requires=REQUIRED_PACKAGES,
     packages=find_packages(),
     include_package_data=True,

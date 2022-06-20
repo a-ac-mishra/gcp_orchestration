@@ -11,15 +11,15 @@ from tensorflow.keras import models
 from google.cloud import bigquery
 
 CSV_COLUMNS = [
-    "fare_amount", 
+    "fare_amount",
     "dayofweek",
-    "hourofday", 
-    "pickup_longitude", 
-    "pickup_latitude", 
+    "hourofday",
+    "pickup_longitude",
+    "pickup_latitude",
     "is_luxury",
-    "distance", 
-    "is_airport", 
-    "dropoff_longitude", 
+    "distance",
+    "is_airport",
+    "dropoff_longitude",
     "dropoff_latitude"
 ]
 
@@ -44,6 +44,7 @@ OPTIMIZER = 'adam'
 LOSS = 'mse'
 METRICS = ['RootMeanSquaredError']
 
+
 def features_and_labels(row_data):
     """ generates features and label from tf dataset
 
@@ -52,7 +53,7 @@ def features_and_labels(row_data):
 
     Returns:
         tuple : features and label
-    """    
+    """
     label = row_data.pop(LABEL_COLUMN)
     features = row_data
     return features, label
@@ -68,7 +69,7 @@ def create_dataset(pattern, batch_size=1, mode=tf.estimator.ModeKeys.EVAL):
 
     Returns:
         tensorflow dataset
-    """    
+    """
     dataset = tf.data.experimental.make_csv_dataset(
         pattern, batch_size, CSV_COLUMNS, DEFAULTS)
     dataset = dataset.map(features_and_labels)
@@ -87,11 +88,11 @@ def euclidean(params):
 
     Returns:
         float: euclidean distance
-    """    
+    """
     lon1, lat1, lon2, lat2 = params
     londiff = lon2 - lon1
     latdiff = lat2 - lat1
-    return tf.sqrt(londiff*londiff + latdiff*latdiff)
+    return tf.sqrt(londiff * londiff + latdiff * latdiff)
 
 
 def transform(inputs, num_cols, cat_cols):
@@ -104,17 +105,17 @@ def transform(inputs, num_cols, cat_cols):
 
     Returns:
         _type_: _description_
-    """    
+    """
     # Pass-through columns
     transformed = inputs.copy()
     feature_columns = {
-        colname: tf.feature_column.numeric_column(colname) for colname in num_cols }
+        colname: tf.feature_column.numeric_column(colname) for colname in num_cols}
     # Add Euclidean distance
     transformed['euclidean'] = layers.Lambda(
         euclidean, name='euclidean')([inputs['pickup_longitude'],
-                           inputs['pickup_latitude'],
-                           inputs['dropoff_longitude'],
-                           inputs['dropoff_latitude']])
+                                      inputs['pickup_latitude'],
+                                      inputs['dropoff_longitude'],
+                                      inputs['dropoff_latitude']])
     feature_columns['euclidean'] = fc.numeric_column('euclidean')
     # Shift 'dayofweek' feature to a value range of 0-6
     transformed['dayofweek'] = transformed['dayofweek'] - 1
@@ -135,7 +136,7 @@ def build_dnn_model():
 
     Returns:
        tf.Model: Compiled DNN model
-    """    
+    """
     # define the imput layers
     inputs = {
         colname: layers.Input(name=colname, shape=(), dtype='float32')
@@ -175,7 +176,7 @@ def train_and_evaluate(hparams):
 
     Returns:
         tf model training history
-    """    
+    """
     strategy = tf.distribute.MirroredStrategy()
     print('Number of devices: {}'.format(strategy.num_replicas_in_sync))
     BATCH_SIZE_PER_REPLICA = 256
@@ -212,7 +213,7 @@ def train_and_evaluate(hparams):
 
     tf.saved_model.save(model, hparams['output_dir'])
 
-    val_metric = history.history['val_RootMeanSquaredError'][NUM_EVALS-1]
+    val_metric = history.history['val_RootMeanSquaredError'][NUM_EVALS - 1]
 
     client = bigquery.Client()
 
